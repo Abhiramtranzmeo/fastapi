@@ -1,0 +1,70 @@
+openapi: 3.0.3
+
+info:
+  title: Pigtracking API
+  description: API that allows you to track pigs
+  version: 1.0.0
+
+servers:
+  - url: localhost
+    description: main production server
+  - url: localhost
+    description: staging server for testing purposes only
+
+paths:
+  /pigtracking/{user_id}:
+    post:
+      summary: Sends user details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/users'
+      responses:
+        '201':
+          description: Successfully received user details
+          content:
+            application/json:
+              # schema:
+              #   $ref: '#/components/schemas/GetOrderSchema'
+
+components:
+  responses:
+    NotFound:
+      description: User not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    basicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    GetUserSchema:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/users'
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int64
+          enum:
+            - dispatched
